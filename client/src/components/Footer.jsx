@@ -12,7 +12,7 @@ const Footer = () => {
                             <span className="text-xl font-bold text-white">CRUXX</span>
                         </div>
                         <p className="text-sm text-gray-400">
-                            Pioneering the future of aerial solutions with precision, innovation, and reliability.
+                            Driven by innovation and guided by foresight, building reliable, safe, and sustainable aerial solutions you can trust—today and for the future.
                         </p>
                     </div>
 

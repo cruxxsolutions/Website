@@ -15,12 +15,12 @@ const Home = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Redefining Aerial Intelligence</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Redefining Aerial Solutions</h2>
                             <p className="text-gray-400 mb-6 text-lg">
-                                At Cruxx Solutions, we leverage cutting-edge drone technology to provide actionable insights and automated solutions across industries. From construction to agriculture, our fleet is ready to deploy.
+                                At Cruxx Solutions, we leverage cutting-edge drone technology to provide actionable insights and automated solutions across industries. If you have a problem, we’ll offer a solution.
                             </p>
                             <ul className="space-y-4 mb-8">
-                                {['Advanced Thermal Imaging', 'LiDAR Mapping Precision', 'Autonomous Patrol Fleets'].map((item, index) => (
+                                {['3D Mapping', 'NDVI Mapping', 'Agricultural Drones'].map((item, index) => (
                                     <li key={index} className="flex items-center text-gray-300">
                                         <CheckCircle2 className="h-5 w-5 text-secondary mr-3" />
                                         {item}
