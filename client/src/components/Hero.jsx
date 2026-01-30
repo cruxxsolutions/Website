@@ -24,7 +24,7 @@ const Hero = () => {
                     transition={{ duration: 0.8 }}
                 >
                    {/* <h2 className="text-primary font-medium tracking-widest uppercase mb-4">Future of Aerial Technology</h2> */}
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb- leading-tight">
+                    <h1 className="text-2xl md:text-5xl font-bold text-white mb-4 leading-tight whitespace-nowrap">
                         Critical Thinking <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Reliable Engineering</span>
                     </h1>
                     <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">

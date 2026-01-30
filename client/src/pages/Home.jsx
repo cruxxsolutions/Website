@@ -17,7 +17,7 @@ const Home = () => {
                         <div>
                             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Redefining Aerial Solutions</h2>
                             <p className="text-gray-400 mb-6 text-lg">
-                                At Cruxx Solutions, we leverage cutting-edge drone technology to provide actionable insights and automated solutions across industries. If you have a problem, we’ll offer a solution.
+                                At Cruxx Solutions, we leverage cutting-edge aerial technology to provide actionable insights and automated solutions across industries. If you have a problem, we’ll offer a solution.
                             </p>
                             <ul className="space-y-4 mb-8">
                                 {['3D Mapping', 'NDVI Mapping', 'Agricultural Drones'].map((item, index) => (
@@ -46,7 +46,7 @@ const Home = () => {
                 <div className="max-w-5xl mx-auto px-4 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to elevate your operations?</h2>
                     <p className="text-gray-300 mb-8 text-lg">
-                        Contact us today to discuss how our drone solutions can save you time, money, and reduce risk.
+                        Contact us today to discuss how our aerial solutions can save you time, money, and reduce risk.
                     </p>
                     <Link to="/contact" className="px-8 py-4 bg-primary text-white font-bold rounded-full hover:bg-sky-600 transition inline-block">
                         Start a Project

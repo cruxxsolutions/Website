@@ -43,6 +43,7 @@ const About = () => {
         <div className="pt-24 pb-20 px-4 max-w-7xl mx-auto">
             <div className="text-center mb-16">
                 <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">About Us</h1>
+                
                  <h2 className="text-2xl font-bold text-white mb-2">
                     Vision
                 </h2>
@@ -59,28 +60,49 @@ const About = () => {
                 <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
                     Through operational excellence, sustainability, and accountability, we exist to serve our customers with care, integrity, and deep responsibility. We listen closely to their challenges, stand beside them in solving what truly matters, and deliver reliable and safe solutions they can trust. By focusing on real impact—not just technology—we help our customers build better outcomes for their communities, their environments, and the future they are working toward.
                 </p>
-                <h2 className="text-2xl font-bold text-white mb-2">
+                <h2 className="text-2xl font-bold text-white mb-8">
                     Core Values
                 </h2>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    Innovation
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    Reliability
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    Integrity
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    Sustainability
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    
-                    Safety
-                </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
-                    Foresight
-                </p>
+                <div className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg py-12 px-6 mb-12">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        <div className="text-center">
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/30 flex items-center justify-center">
+                                <span className="text-3xl">💡</span>
+                            </div>
+                            <p className="text-white font-bold text-lg uppercase tracking-wide">Innovation</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/30 flex items-center justify-center">
+                                <span className="text-3xl">⚙️</span>
+                            </div>
+                            <p className="text-white font-bold text-lg uppercase tracking-wide">Reliability</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/30 flex items-center justify-center">
+                                <span className="text-3xl">🤝</span>
+                            </div>
+                            <p className="text-white font-bold text-lg uppercase tracking-wide">Integrity</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/30 flex items-center justify-center">
+                                <span className="text-3xl">🌱</span>
+                            </div>
+                            <p className="text-white font-bold text-lg uppercase tracking-wide">Sustainability</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/30 flex items-center justify-center">
+                                <span className="text-3xl">🛡️</span>
+                            </div>
+                            <p className="text-white font-bold text-lg uppercase tracking-wide">Safety</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/30 flex items-center justify-center">
+                                <span className="text-3xl">🔮</span>
+                            </div>
+                            <p className="text-white font-bold text-lg uppercase tracking-wide">Foresight</p>
+                        </div>
+                    </div>
+                </div>
                 <h2 className="text-2xl font-bold text-white mb-2">
                     Our Team
                 </h2>

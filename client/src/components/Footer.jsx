@@ -12,7 +12,7 @@ const Footer = () => {
                             <span className="text-xl font-bold text-white">CRUXX</span>
                         </div>
                         <p className="text-sm text-gray-400">
-                            Driven by innovation and guided by foresight, building reliable, safe, and sustainable aerial solutions you can trust—today and for the future.
+                            Driven by innovation and guided by foresight, building reliable, safe, and sustainable aerial solutions you can trust; today and for the future.
                         </p>
                     </div>
 
@@ -21,7 +21,7 @@ const Footer = () => {
                         <ul className="space-y-2 text-sm">
                             <li><a href="#" className="hover:text-primary transition">Aerial Photography</a></li>
                             <li><a href="#" className="hover:text-primary transition">Mapping & Surveying</a></li>
-                            <li><a href="#" className="hover:text-primary transition">Industrial Inspection</a></li>
+                            <li><a href="#" className="hover:text-primary transition">Agritech</a></li>
                             <li><a href="#" className="hover:text-primary transition">Security & Surveillance</a></li>
                         </ul>
                     </div>
@@ -29,10 +29,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-white font-semibold mb-4">Contact</h3>
                         <ul className="space-y-2 text-sm">
-                            <li className="flex items-center space-x-2">
-                                <MapPin className="h-4 w-4 text-primary" />
-                                <span>123 Drone Valley, Tech City</span>
-                            </li>
+                            
                             <li className="flex items-center space-x-2">
                                 <Phone className="h-4 w-4 text-primary" />
                                 <span>+91 9028135933</span>

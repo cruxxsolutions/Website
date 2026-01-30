@@ -17,8 +17,11 @@ const Services = () => {
                 console.error("Error fetching services:", error);
                 // Fallback data if backend isn't ready/connected
                 setServices([
-                    { title: 'Aerial Photography', description: 'High-res imaging', icon: 'Camera', category: 'Media' },
-                    { title: 'Mapping', description: '3D Mapping', icon: 'Map', category: 'Construction' }
+                    { title: 'AgriTech', description: 'NDVI Sensing & Precision Agriculture', icon: 'Sprout', category: 'SMART AGRICULTURE' },
+                    { title: 'Smart Infrastructure', description: 'Surveying & 3D Mapping', icon: 'Map', category: 'INFRASTRUCTURE' },
+                    { title: 'Aerial Photography', description: 'Photogrammetry & Cinematography', icon: 'Camera', category: 'MEDIA' },
+                    { title: 'Custom Solutions', description: 'Tailored UAV Systems for Your Requirements', icon: 'Rocket', category: 'ENGINEERING' },
+                    { title: 'Cross-Domain Solutions', description: 'Expertise Beyond Boundaries. Let\'s Talk', icon: 'Activity', category: 'INNOVATION' }
                 ]);
             } finally {
                 setLoading(false);
