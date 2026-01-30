@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 
-const Contact = require('../models/Contact');
 dotenv.config();
 // @desc    Submit a contact form
 // @route   POST /api/contact
@@ -10,14 +9,6 @@ const submitContact = async (req, res) => {
     const { name, email, phone, message } = req.body;
 
     try {
-        // Save contact to database
-        const contact = await Contact.create({
-            name,
-            email,
-            company: req.body.company || '', // Assuming company might be optional
-            message,
-        });
-
         // Set up nodemailer transporter
         const transporter = nodemailer.createTransport({
             service: 'gmail', // You can use other services
@@ -63,11 +54,11 @@ const submitContact = async (req, res) => {
         await transporter.sendMail(userMailOptions);
         console.log('User email sent successfully.');
 
-        res.status(201).json({ message: 'Message sent successfully!', contact });
+        res.status(200).json({ message: 'Email successfully sent.' });
     } catch (error) {
         console.log('Error:', error);
         res.status(500).json({ message: 'Something went wrong: ' + error.message });
     }
 };
 
-module.exports = { submitContact };
+module.exports = { submitContact }; 
