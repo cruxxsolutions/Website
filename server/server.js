@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
@@ -11,12 +12,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Serve frontend build (if exists)
+const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(clientDistPath));
+
+// API Routes
 app.use('/api/contact', require('./routes/contactRoutes'));
 
-// Test Route
-app.get('/', (req, res) => {
-  res.send('Cruxx API is running...');
+// Fallback - serve client for any unknown route (client-side routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientDistPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
