@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Rocket } from 'lucide-react';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const location = useLocation();
+
+    const isActive = (path) => {
+        return location.pathname === path ? 'text-primary' : 'text-gray-300';
+    };
 
     return (
         <nav className="fixed w-full z-50 bg-darker/80 backdrop-blur-md border-b border-gray-800">
@@ -17,10 +22,10 @@ const Navbar = () => {
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-8">
-                            <Link to="/" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
-                            <Link to="/services" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
-                            <Link to="/about" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">About Us</Link>
-                            <Link to="/contact" className="text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</Link>
+                            <Link to="/" className={`${isActive('/')} hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors`}>Home</Link>
+                            <Link to="/services" className={`${isActive('/services')} hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors`}>Services</Link>
+                            <Link to="/about" className={`${isActive('/about')} hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors`}>About Us</Link>
+                            <Link to="/contact" className={`${isActive('/contact')} hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors`}>Contact</Link>
                             <Link to="/contact" className="bg-primary hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Get Quote</Link>
                         </div>
                     </div>
@@ -39,10 +44,10 @@ const Navbar = () => {
             {isOpen && (
                 <div className="md:hidden bg-darker border-b border-gray-800">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link to="/" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Home</Link>
-                        <Link to="/about" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium">About Us</Link>
-                        <Link to="/services" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Services</Link>
-                        <Link to="/contact" className="text-gray-300 hover:text-primary block px-3 py-2 rounded-md text-base font-medium">Contact</Link>
+                        <Link to="/" className={`${isActive('/')} hover:text-primary block px-3 py-2 rounded-md text-base font-medium`}>Home</Link>
+                        <Link to="/about" className={`${isActive('/about')} hover:text-primary block px-3 py-2 rounded-md text-base font-medium`}>About Us</Link>
+                        <Link to="/services" className={`${isActive('/services')} hover:text-primary block px-3 py-2 rounded-md text-base font-medium`}>Services</Link>
+                        <Link to="/contact" className={`${isActive('/contact')} hover:text-primary block px-3 py-2 rounded-md text-base font-medium`}>Contact</Link>
                     </div>
                 </div>
             )}
