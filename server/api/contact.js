@@ -10,13 +10,23 @@ const submitContact = async (req, res) => {
     }
 
     try {
-        // Set up nodemailer transporter
+        // Set up nodemailer transporter with explicit SMTP settings
+        // Using explicit settings instead of 'service: gmail' for better compatibility with Render
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: parseInt(process.env.SMTP_PORT || '587'),
+            secure: false, // true for 465, false for other ports
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
-            }
+            },
+            tls: {
+                // Do not fail on invalid certs
+                rejectUnauthorized: false
+            },
+            connectionTimeout: 10000, // 10 seconds
+            greetingTimeout: 10000,
+            socketTimeout: 10000
         });
 
         // Email to admin
@@ -49,13 +59,36 @@ const submitContact = async (req, res) => {
             `
         };
 
+        // Verify connection before sending (optional but helps catch connection issues early)
+        // Commented out as it can cause timeout issues - uncomment if you want to test connection first
+        // await transporter.verify();
+
         await transporter.sendMail(adminMailOptions);
         await transporter.sendMail(userMailOptions);
 
         res.status(200).json({ message: 'Email successfully sent.' });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: 'Something went wrong: ' + error.message });
+        console.error('Email error:', error);
+        
+        // Provide more specific error messages
+        if (error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED') {
+            return res.status(502).json({ 
+                message: 'Email service connection failed. Please check SMTP settings or try again later.',
+                error: 'Connection timeout or refused'
+            });
+        }
+        
+        if (error.code === 'EAUTH') {
+            return res.status(401).json({ 
+                message: 'Email authentication failed. Please check EMAIL_USER and EMAIL_PASS.',
+                error: 'Authentication error'
+            });
+        }
+        
+        res.status(500).json({ 
+            message: 'Failed to send email: ' + (error.message || 'Unknown error'),
+            error: error.code || 'Unknown'
+        });
     }
 };
 

@@ -26,6 +26,8 @@ if (fs.existsSync(clientDistPath)) {
 
 // API Routes
 app.use('/api/contact', require('./routes/contactRoutes'));
+// Health/test route for email provider connectivity
+app.use('/api/email-test', require('./routes/emailRoutes'));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
