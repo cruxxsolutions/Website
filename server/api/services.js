@@ -1,6 +1,3 @@
-const express = require('express');
-const cors = require('cors');
-
 // Default services data (fallback)
 const defaultServices = [
     { 

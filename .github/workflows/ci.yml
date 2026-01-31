@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          client/package-lock.json
+          server/package-lock.json
+    
+    - name: Install frontend dependencies
+      working-directory: ./client
+      run: npm ci
+    
+    - name: Lint frontend
+      working-directory: ./client
+      run: npm run lint
+    
+    - name: Build frontend
+      working-directory: ./client
+      run: npm run build
+    
+    - name: Install backend dependencies
+      working-directory: ./server
+      run: npm ci
+    
+    - name: Verify backend structure
+      working-directory: ./server
+      run: |
+        test -f server.js && echo "✓ server.js found"
+        test -f api/contact.js && echo "✓ api/contact.js found"
+        test -f api/services.js && echo "✓ api/services.js found"
+        echo "Backend structure verified"
