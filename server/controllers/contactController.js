@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { MailtrapClient } = require('mailtrap');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -13,16 +14,17 @@ const submitContact = async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields: name, email, and message are required.' });
     }
 
+    const canUseMailtrapApi = !!process.env.MAILTRAP_API_TOKEN;
     const canUseMailtrap = !!(process.env.MAILTRAP_USER && process.env.MAILTRAP_PASS);
     const canUseSMTP = !!process.env.EMAIL_USER && !!process.env.EMAIL_PASS;
 
-    if (!canUseMailtrap && !canUseSMTP) {
-        console.error('No email provider configured (MAILTRAP_USER/MAILTRAP_PASS or EMAIL_USER/EMAIL_PASS).');
+    if (!canUseMailtrapApi && !canUseMailtrap && !canUseSMTP) {
+        console.error('No email provider configured (MAILTRAP_API_TOKEN or MAILTRAP_USER/MAILTRAP_PASS or EMAIL_USER/EMAIL_PASS).');
         if (process.env.NODE_ENV !== 'production') {
             console.log('DEV MODE: Simulating email send for contact:', { name, email, company, message });
             return res.status(200).json({ message: 'DEV: simulated email sent.' });
         }
-        return res.status(500).json({ message: 'Email service not configured. Set MAILTRAP_USER/MAILTRAP_PASS or EMAIL_USER/EMAIL_PASS.' });
+        return res.status(500).json({ message: 'Email service not configured. Set MAILTRAP_API_TOKEN or MAILTRAP_USER/MAILTRAP_PASS or EMAIL_USER/EMAIL_PASS.' });
     }
 
     const from = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'no-reply@localhost';
