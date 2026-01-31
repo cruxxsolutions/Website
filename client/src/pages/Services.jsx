@@ -10,8 +10,8 @@ const Services = () => {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                // In a real scenario, use env var for API URL
-                const { data } = await axios.get('http://localhost:5000/api/services');
+                const API_BASE = import.meta.env.VITE_API_URL || '';
+                const { data } = await axios.get(`${API_BASE}/api/services`);
                 setServices(data);
             } catch (error) {
                 console.error("Error fetching services:", error);

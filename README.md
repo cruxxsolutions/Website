@@ -34,5 +34,17 @@ Open `http://localhost:5173` in your browser.
 ## Features
 - Dynamic Services listing
 - Project Gallery
-- Contact Form (stores to DB)
+- Contact Form (sends emails via nodemailer)
 - Responsive Design with Dark Mode theme
+
+## Deployment
+
+This project is configured for deployment on Vercel. See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
+
+### Quick Deploy
+
+1. **Frontend**: Deploy `client` directory as a Vite project
+2. **Backend**: Deploy `server` directory with serverless functions in `server/api`
+3. Set environment variables (see [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md))
+
+For custom domain setup and detailed instructions, refer to [DEPLOYMENT.md](./DEPLOYMENT.md).
