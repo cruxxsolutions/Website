@@ -6,12 +6,28 @@ dotenv.config();
 // @route   POST /api/contact
 // @access  Public
 const submitContact = async (req, res) => {
-    const { name, email, phone, message } = req.body;
+    const { name, email, company, message } = req.body;
+
+    // Basic validation
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: 'Missing required fields: name, email, and message are required.' });
+    }
+
+    // Ensure email credentials are configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.error('EMAIL_USER or EMAIL_PASS is not configured.');
+        // In development, simulate success so testing isn't blocked
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('DEV MODE: Simulating email send for contact:', { name, email, company, message });
+            return res.status(200).json({ message: 'DEV: simulated email sent.' });
+        }
+        return res.status(500).json({ message: 'Email service not configured.' });
+    }
 
     try {
         // Set up nodemailer transporter
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // You can use other services
+            service: 'gmail', // You can use other services or SMTP settings
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
@@ -29,7 +45,7 @@ const submitContact = async (req, res) => {
                 <ul>
                     <li>Name: ${name}</li>
                     <li>Email: ${email}</li>
-                    <li>Phone: ${phone}</li>
+                    <li>Company: ${company || 'N/A'}</li>
                 </ul>
                 <h3>Message</h3>
                 <p>${message}</p>
@@ -49,15 +65,16 @@ const submitContact = async (req, res) => {
         };
 
         console.log('Sending email to admin and user...');
-        await transporter.sendMail(adminMailOptions);
-        console.log('Admin email sent successfully.');
-        await transporter.sendMail(userMailOptions);
-        console.log('User email sent successfully.');
+        const infoAdmin = await transporter.sendMail(adminMailOptions);
+        console.log('Admin email send result:', infoAdmin && infoAdmin.messageId);
+        const infoUser = await transporter.sendMail(userMailOptions);
+        console.log('User email send result:', infoUser && infoUser.messageId);
 
         res.status(200).json({ message: 'Email successfully sent.' });
     } catch (error) {
-        console.log('Error:', error);
-        res.status(500).json({ message: 'Something went wrong: ' + error.message });
+        console.error('Contact submit error:', error);
+        // Return only non-sensitive message to client
+        return res.status(500).json({ message: 'Failed to send email. ' + (error && error.message ? error.message : '') });
     }
 };
 
