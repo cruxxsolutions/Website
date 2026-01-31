@@ -1,6 +1,6 @@
-const nodemailer = require('nodemailer');
+const { MailtrapClient } = require('mailtrap');
 
-// Contact form handler
+// Contact form handler using Mailtrap API only
 const submitContact = async (req, res) => {
     const { name, email, company, message } = req.body;
 
@@ -9,86 +9,49 @@ const submitContact = async (req, res) => {
         return res.status(400).json({ message: 'Name, email, and message are required.' });
     }
 
+    if (!process.env.MAILTRAP_API_TOKEN) {
+        console.error('MAILTRAP_API_TOKEN not configured.');
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('DEV MODE: Simulating email send for contact:', { name, email, company, message });
+            return res.status(200).json({ message: 'DEV: simulated email sent.' });
+        }
+        return res.status(500).json({ message: 'Email service not configured. Set MAILTRAP_API_TOKEN.' });
+    }
+
     try {
-        // Set up nodemailer transporter with explicit SMTP settings
-        // Using explicit settings instead of 'service: gmail' for better compatibility with Render
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT || '587'),
-            secure: false, // true for 465, false for other ports
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                // Do not fail on invalid certs
-                rejectUnauthorized: false
-            },
-            connectionTimeout: 10000, // 10 seconds
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
+        const client = new MailtrapClient({ token: process.env.MAILTRAP_API_TOKEN });
+        const sender = {
+            email: process.env.MAILTRAP_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'no-reply@localhost',
+            name: process.env.MAILTRAP_FROM_NAME || 'Cruxx'
+        };
+
+        const adminRecipient = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'admin@localhost';
 
         // Email to admin
-        const adminMailOptions = {
-            from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_USER,
+        await client.send({
+            from: sender,
+            to: [{ email: adminRecipient }],
             subject: `Contact Form Submission from ${name}`,
-            html: `
-                <p>You have a new contact form submission</p>
-                <h3>Contact Details</h3>
-                <ul>
-                    <li>Name: ${name}</li>
-                    <li>Email: ${email}</li>
-                    <li>Company: ${company || 'N/A'}</li>
-                </ul>
-                <h3>Message</h3>
-                <p>${message}</p>
-            `
-        };
+            text: `Contact message from ${name} (${email}): ${message}`,
+            category: 'contact-form'
+        });
 
         // Email to user
-        const userMailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
+        await client.send({
+            from: sender,
+            to: [{ email }],
             subject: 'Thank you for contacting Cruxx Solutions',
-            html: `
-                <p>Dear ${name},</p>
-                <p>We have received your request and will get back to you soon.</p>
-                <p>Best regards,<br>Cruxx Solutions Team</p>
-            `
-        };
-
-        // Verify connection before sending (optional but helps catch connection issues early)
-        // Commented out as it can cause timeout issues - uncomment if you want to test connection first
-        // await transporter.verify();
-
-        await transporter.sendMail(adminMailOptions);
-        await transporter.sendMail(userMailOptions);
+            text: 'We have received your request and will get back to you soon.',
+            category: 'contact-form'
+        });
 
         res.status(200).json({ message: 'Email successfully sent.' });
     } catch (error) {
-        console.error('Email error:', error);
-        
-        // Provide more specific error messages
-        if (error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED') {
-            return res.status(502).json({ 
-                message: 'Email service connection failed. Please check SMTP settings or try again later.',
-                error: 'Connection timeout or refused'
-            });
+        console.error('Mailtrap API error:', error && error.response && error.response.status ? { status: error.response.status } : error.message || error);
+        if (error && error.response && error.response.status === 401) {
+            return res.status(502).json({ message: 'Mailtrap API unauthorized: check MAILTRAP_API_TOKEN and its "Send" permission.' });
         }
-        
-        if (error.code === 'EAUTH') {
-            return res.status(401).json({ 
-                message: 'Email authentication failed. Please check EMAIL_USER and EMAIL_PASS.',
-                error: 'Authentication error'
-            });
-        }
-        
-        res.status(500).json({ 
-            message: 'Failed to send email: ' + (error.message || 'Unknown error'),
-            error: error.code || 'Unknown'
-        });
+        return res.status(500).json({ message: 'Failed to send email: ' + (error && error.message ? error.message : String(error)) });
     }
 };
 

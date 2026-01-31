@@ -1,4 +1,3 @@
-const nodemailer = require('nodemailer');
 const { MailtrapClient } = require('mailtrap');
 const dotenv = require('dotenv');
 
@@ -61,123 +60,58 @@ const submitContact = async (req, res) => {
             const userRecipients = [{ email }];
 
             console.log('Sending emails via Mailtrap API...');
-            await client.send({
-                from: sender,
-                to: adminRecipients,
-                subject: `Contact Form Submission from ${name}`,
-                text: `Contact message from ${name} (${email}): ${message}`,
-                category: 'contact-form',
-                html: adminHtml
-            });
+            try {
+                await client.send({
+                    from: sender,
+                    to: adminRecipients,
+                    subject: `Contact Form Submission from ${name}`,
+                    text: `Contact message from ${name} (${email}): ${message}`,
+                    category: 'contact-form',
+                    html: adminHtml
+                });
 
-            await client.send({
-                from: sender,
-                to: userRecipients,
-                subject: 'Thank you for contacting us',
-                text: 'We have received your request and will get back to you soon.',
-                category: 'contact-form',
-                html: userHtml
-            });
+                await client.send({
+                    from: sender,
+                    to: userRecipients,
+                    subject: 'Thank you for contacting us',
+                    text: 'We have received your request and will get back to you soon.',
+                    category: 'contact-form',
+                    html: userHtml
+                });
+
+                return res.status(200).json({ message: 'Email successfully sent via Mailtrap API.' });
+            } catch (mailtrapErr) {
+                console.error('Mailtrap API error:', mailtrapErr && mailtrapErr.response && mailtrapErr.response.status ? { status: mailtrapErr.response.status } : mailtrapErr.message || mailtrapErr);
+                if (mailtrapErr && mailtrapErr.response && mailtrapErr.response.status === 401) {
+                    return res.status(502).json({ message: 'Mailtrap API unauthorized: check MAILTRAP_API_TOKEN and ensure it has "Send" permissions.' });
+                }
+                throw mailtrapErr;
+            }
+        }
+
+        // Mailtrap API only (nodemailer and SMTP removed)
+        const client = new MailtrapClient({ token: process.env.MAILTRAP_API_TOKEN });
+        const sender = {
+            email: process.env.MAILTRAP_FROM || (process.env.EMAIL_FROM || process.env.EMAIL_USER) || 'no-reply@localhost',
+            name: process.env.MAILTRAP_FROM_NAME || 'Cruxx'
+        };
+
+        const adminRecipients = [{ email: adminRecipient }];
+        const userRecipients = [{ email }];
+
+        console.log('Sending emails via Mailtrap API...');
+        try {
+            await client.send({ from: sender, to: adminRecipients, subject: `Contact Form Submission from ${name}`, text: `Contact message from ${name} (${email}): ${message}`, category: 'contact-form', html: adminHtml });
+            await client.send({ from: sender, to: userRecipients, subject: 'Thank you for contacting us', text: 'We have received your request and will get back to you soon.', category: 'contact-form', html: userHtml });
 
             return res.status(200).json({ message: 'Email successfully sent via Mailtrap API.' });
-        }
-
-        // Fallback to SMTP via nodemailer (supports Mailtrap SMTP)
-        let transporter;
-        let smtpHost = null;
-        let smtpPort = null;
-        if (canUseMailtrap) {
-            smtpHost = process.env.MAILTRAP_HOST || 'smtp.mailtrap.io';
-            smtpPort = Number(process.env.MAILTRAP_PORT) || 2525;
-            console.log('Configuring Mailtrap SMTP', { host: smtpHost, port: smtpPort });
-            transporter = nodemailer.createTransport({
-                host: smtpHost,
-                port: smtpPort,
-                auth: {
-                    user: process.env.MAILTRAP_USER,
-                    pass: process.env.MAILTRAP_PASS
-                },
-                connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT) || 15000,
-                greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT) || 15000,
-                socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 15000
-            });
-        } else {
-            smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
-            smtpPort = parseInt(process.env.SMTP_PORT || '587');
-            console.log('Configuring SMTP', { host: smtpHost, port: smtpPort });
-            transporter = nodemailer.createTransport({
-                host: smtpHost,
-                port: smtpPort,
-                secure: smtpPort === 465, // true for 465, false for other ports
-                auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
-                },
-                tls: {
-                    // Do not fail on invalid certs
-                    rejectUnauthorized: false
-                },
-                connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT) || 15000,
-                greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT) || 15000,
-                socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 15000
-            });
-        }
-
-        // Try sending and fallback to Mailtrap API on ETIMEDOUT
-        try {
-            console.log('Sending email to admin and user via SMTP...', { host: smtpHost, port: smtpPort });
-            const infoAdmin = await transporter.sendMail(adminMailOptions);
-            console.log('Admin email send result:', infoAdmin && infoAdmin.messageId);
-            const infoUser = await transporter.sendMail(userMailOptions);
-            console.log('User email send result:', infoUser && infoUser.messageId);
-
-            return res.status(200).json({ message: 'Email successfully sent via SMTP.' });
-        } catch (smtpErr) {
-            console.error('SMTP send error:', smtpErr);
-            if ((smtpErr && smtpErr.code === 'ETIMEDOUT') && process.env.MAILTRAP_API_TOKEN) {
-                console.log('SMTP ETIMEDOUT — attempting Mailtrap API fallback...');
-                const client = new MailtrapClient({ token: process.env.MAILTRAP_API_TOKEN });
-                const sender = {
-                    email: process.env.MAILTRAP_FROM || (process.env.EMAIL_FROM || process.env.EMAIL_USER) || 'no-reply@localhost',
-                    name: process.env.MAILTRAP_FROM_NAME || 'Cruxx'
-                };
-                const adminRecipients = [{ email: adminRecipient }];
-                const userRecipients = [{ email }];
-
-                await client.send({ from: sender, to: adminRecipients, subject: `Contact Form Submission from ${name}`, text: `Contact message from ${name} (${email}): ${message}`, category: 'contact-form', html: adminHtml });
-                await client.send({ from: sender, to: userRecipients, subject: 'Thank you for contacting us', text: 'We have received your request and will get back to you soon.', category: 'contact-form', html: userHtml });
-
-                return res.status(200).json({ message: 'Email sent via Mailtrap API as fallback after SMTP timeout.' });
+        } catch (mailtrapErr) {
+            console.error('Mailtrap API error:', mailtrapErr && mailtrapErr.response && mailtrapErr.response.status ? { status: mailtrapErr.response.status } : mailtrapErr.message || mailtrapErr);
+            if (mailtrapErr && mailtrapErr.response && mailtrapErr.response.status === 401) {
+                return res.status(502).json({ message: 'Mailtrap API unauthorized: check MAILTRAP_API_TOKEN and ensure it has "Send" permissions.' });
             }
-
-            if (smtpErr && smtpErr.code === 'ETIMEDOUT') {
-                return res.status(502).json({ message: `Email provider connection timed out when connecting to ${smtpHost}:${smtpPort}. Check provider, port, or network egress rules.` });
-            }
-
-            throw smtpErr; // let outer catch handle other errors
+            return res.status(500).json({ message: 'Failed to send email via Mailtrap API: ' + (mailtrapErr && mailtrapErr.message ? mailtrapErr.message : String(mailtrapErr)) });
         }
-
-        const adminMailOptions = {
-            from,
-            to: adminRecipient,
-            subject: `Contact Form Submission from ${name}`,
-            html: adminHtml
-        };
-
-        const userMailOptions = {
-            from,
-            to: email,
-            subject: 'Thank you for contacting us',
-            html: userHtml
-        };
-
-        console.log('Sending email to admin and user via SMTP...');
-        const infoAdmin = await transporter.sendMail(adminMailOptions);
-        console.log('Admin email send result:', infoAdmin && infoAdmin.messageId);
-        const infoUser = await transporter.sendMail(userMailOptions);
-        console.log('User email send result:', infoUser && infoUser.messageId);
-
-        return res.status(200).json({ message: 'Email successfully sent via SMTP.' });
     } catch (error) {
         console.error('Contact submit error:', error);
         return res.status(500).json({ message: 'Failed to send email. ' + (error && error.message ? error.message : '') });
