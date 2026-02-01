@@ -100,9 +100,10 @@ const submitContact = async (req, res) => {
             return res.status(502).json({ message: 'Mailgun API error.', mailgunStatus: mgStatus, detail: mgBody });
             
         }
-
+        console.log('Mailgun response error:', error && error.response ? error.response.body : error);
+            
         // Fallback to unexpected server error
-        return res.status(500).json({ message: 'Unexpected error sending email.' });
+        return res.status(500).json({ message: 'Unexpected error sending email.',error: error && error.message ? error.message : String(error) });
     }
 };
 
