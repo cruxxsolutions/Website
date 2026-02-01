@@ -34,7 +34,7 @@ const About = () => {
         },
         {
             name: 'Nikhil Redkar',
-            role: 'Lead Software Engineer',
+            role: 'Software Engineer',
             branch: '',
         }
     ];
