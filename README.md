@@ -34,7 +34,7 @@ Open `http://localhost:5173` in your browser.
 ## Features
 - Dynamic Services listing
 - Project Gallery
-- Contact Form (sends emails via Mailtrap API)
+- Contact Form (sends emails via Mailgun)
 - Responsive Design with Dark Mode theme
 
 ## Deployment

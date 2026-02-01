@@ -1,6 +1,7 @@
-const { MailtrapClient } = require('mailtrap');
+const Mailgun = require('mailgun.js');
+const FormData = require('form-data');
 
-// Contact form handler using Mailtrap API only
+// Contact form handler using Mailgun
 const submitContact = async (req, res) => {
     const { name, email, company, message } = req.body;
 
@@ -9,47 +10,43 @@ const submitContact = async (req, res) => {
         return res.status(400).json({ message: 'Name, email, and message are required.' });
     }
 
-    if (!process.env.MAILTRAP_API_TOKEN) {
-        console.error('MAILTRAP_API_TOKEN not configured.');
+    if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
+        console.error('MAILGUN_API_KEY or MAILGUN_DOMAIN not configured.');
         if (process.env.NODE_ENV !== 'production') {
             console.log('DEV MODE: Simulating email send for contact:', { name, email, company, message });
             return res.status(200).json({ message: 'DEV: simulated email sent.' });
         }
-        return res.status(500).json({ message: 'Email service not configured. Set MAILTRAP_API_TOKEN.' });
+        return res.status(500).json({ message: 'Email service not configured. Set MAILGUN_API_KEY and MAILGUN_DOMAIN.' });
     }
 
     try {
-        const client = new MailtrapClient({ token: process.env.MAILTRAP_API_TOKEN });
-        const sender = {
-            email: process.env.MAILTRAP_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'no-reply@localhost',
-            name: process.env.MAILTRAP_FROM_NAME || 'Cruxx'
-        };
+        const mailgun = new Mailgun(FormData);
+        const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY, url: process.env.MAILGUN_API_URL || 'https://api.mailgun.net' });
 
+        const from = process.env.MAILGUN_FROM || `Cruxx <postmaster@${process.env.MAILGUN_DOMAIN}>`;
         const adminRecipient = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'admin@localhost';
 
         // Email to admin
-        await client.send({
-            from: sender,
-            to: [{ email: adminRecipient }],
+        await mg.messages.create(process.env.MAILGUN_DOMAIN, {
+            from,
+            to: [adminRecipient],
             subject: `Contact Form Submission from ${name}`,
-            text: `Contact message from ${name} (${email}): ${message}`,
-            category: 'contact-form'
+            text: `Contact message from ${name} (${email}): ${message}`
         });
 
         // Email to user
-        await client.send({
-            from: sender,
-            to: [{ email }],
+        await mg.messages.create(process.env.MAILGUN_DOMAIN, {
+            from,
+            to: [email],
             subject: 'Thank you for contacting Cruxx Solutions',
-            text: 'We have received your request and will get back to you soon.',
-            category: 'contact-form'
+            text: 'We have received your request and will get back to you soon.'
         });
 
         res.status(200).json({ message: 'Email successfully sent.' });
     } catch (error) {
-        console.error('Mailtrap API error:', error && error.response && error.response.status ? { status: error.response.status } : error.message || error);
+        console.error('Mailgun API error:', error && (error.response || error.message) ? (error.response ? { status: error.response.status } : error.message) : error);
         if (error && error.response && error.response.status === 401) {
-            return res.status(502).json({ message: 'Mailtrap API unauthorized: check MAILTRAP_API_TOKEN and its "Send" permission.' });
+            return res.status(502).json({ message: 'Mailgun unauthorized: check MAILGUN_API_KEY and MAILGUN_DOMAIN.' });
         }
         return res.status(500).json({ message: 'Failed to send email: ' + (error && error.message ? error.message : String(error)) });
     }
