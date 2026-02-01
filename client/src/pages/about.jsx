@@ -108,14 +108,23 @@ const About = () => {
                 <h2 className="text-2xl font-bold text-white mb-2">
                     Our Team
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-                    {teamMembers.map((member) => (
-                        <div key={member.name} className="bg-darker p-6 rounded-2xl text-center">
-                            <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
-                            <p className="text-gray-400 mb-2">{member.role}</p>
-                            <p className="text-gray-500 text-sm">{member.branch}</p>
+                <div className="flex flex-col items-center gap-8 mt-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+                        {teamMembers.slice(0, 6).map((member) => (
+                            <div key={member.name} className="bg-darker p-6 rounded-2xl text-center">
+                                <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
+                                <p className="text-gray-400 mb-2">{member.role}</p>
+                                <p className="text-gray-500 text-sm">{member.branch}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="w-full flex justify-center">
+                        <div className="bg-darker p-6 rounded-2xl text-center md:w-1/3">
+                            <h3 className="text-xl font-bold text-white mb-2">{teamMembers[6].name}</h3>
+                            <p className="text-gray-400 mb-2">{teamMembers[6].role}</p>
+                            <p className="text-gray-500 text-sm">{teamMembers[6].branch}</p>
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
         </div>
