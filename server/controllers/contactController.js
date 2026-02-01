@@ -1,13 +1,15 @@
 const Mailgun = require('mailgun.js');
 const FormData = require('form-data');
-const dotenv = require('dotenv');
-
-dotenv.config();
 // @desc    Submit a contact form
 // @route   POST /api/contact
 // @access  Public
 const submitContact = async (req, res) => {
     const { name, email, company, message } = req.body;
+
+    // Non-production: log incoming body to help debug malformed requests (no secrets)
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('Contact submit received:', { body: req.body, rawBody: req.rawBody ? (req.rawBody.length > 1000 ? req.rawBody.slice(0,1000) + '...' : req.rawBody) : undefined });
+    }
 
     // Basic validation
     if (!name || !email || !message) {
@@ -20,7 +22,7 @@ const submitContact = async (req, res) => {
             console.log('DEV MODE: Simulating email send for contact:', { name, email, company, message });
             return res.status(200).json({ message: 'DEV: simulated email sent.' });
         }
-        return res.status(500).json({ message: 'Email service not configured. Set MAILGUN_API_KEY and MAILGUN_DOMAIN.' });
+        return res.status(503).json({ message: 'Email service not configured. Set MAILGUN_API_KEY and MAILGUN_DOMAIN.' });
     }
 
     const from = process.env.MAILGUN_FROM || `Cruxx <postmaster@${process.env.MAILGUN_DOMAIN}>`;
@@ -46,11 +48,13 @@ const submitContact = async (req, res) => {
 
     try {
         const mailgun = new Mailgun(FormData);
-        const mg = mailgun.client({
-            username: 'api',
-            key: process.env.MAILGUN_API_KEY,
-            url: process.env.MAILGUN_API_URL || 'https://api.mailgun.net'
-        });
+        const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY, url: process.env.MAILGUN_API_URL || 'https://api.mailgun.net' });
+
+        // Basic email format validation
+        const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!emailIsValid) {
+            return res.status(400).json({ message: 'Invalid recipient email address.' });
+        }
 
         // Send email to admin
         await mg.messages.create(process.env.MAILGUN_DOMAIN, {
@@ -72,11 +76,32 @@ const submitContact = async (req, res) => {
 
         return res.status(200).json({ message: 'Email successfully sent via Mailgun.' });
     } catch (error) {
-        console.error('Mailgun error:', error && (error.response || error.message) ? (error.response ? { status: error.response.status } : error.message) : error);
-        if (error && error.response && error.response.status === 401) {
-            return res.status(502).json({ message: 'Mailgun unauthorized: check MAILGUN_API_KEY and MAILGUN_DOMAIN.' });
+        // Log a concise error (avoid leaking secrets)
+        console.error('Mailgun API error:', error && (error.response || error.message) ? (error.response ? { status: error.response.status } : error.message) : error);
+
+        // If Mailgun returned an HTTP response, map to a helpful status/message
+        if (error && error.response && error.response.status) {
+            const mgStatus = error.response.status;
+            const mgBody = error.response.body ? (typeof error.response.body === 'string' ? error.response.body : JSON.stringify(error.response.body)) : error.message || '';
+
+            if (mgStatus === 400) {
+                return res.status(502).json({
+                    message: 'Mailgun rejected the request (Bad Request). Check `MAILGUN_DOMAIN` and `MAILGUN_FROM` (domain verification and from address).',
+                    mailgunStatus: mgStatus,
+                    detail: mgBody
+                });
+            }
+
+            if (mgStatus === 401) {
+                return res.status(502).json({ message: 'Mailgun unauthorized: check MAILGUN_API_KEY.', mailgunStatus: mgStatus, detail: mgBody });
+            }
+
+            // Other Mailgun errors
+            return res.status(502).json({ message: 'Mailgun API error.', mailgunStatus: mgStatus, detail: mgBody });
         }
-        return res.status(500).json({ message: 'Failed to send email via Mailgun: ' + (error && error.message ? error.message : String(error)) });
+
+        // Fallback to unexpected server error
+        return res.status(500).json({ message: 'Unexpected error sending email.' });
     }
 };
 

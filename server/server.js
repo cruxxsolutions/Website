@@ -12,7 +12,15 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || '*';
 app.use(cors({ origin: CLIENT_ORIGIN }));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf, encoding) => {
+    try {
+      req.rawBody = buf.toString(encoding || 'utf8');
+    } catch (e) {
+      req.rawBody = undefined;
+    }
+  }
+}));
 
 // API Routes (register API endpoints before serving static client)
 app.use('/api/contact', require('./routes/contactRoutes'));
@@ -30,6 +38,15 @@ if (fs.existsSync(clientDistPath)) {
     res.sendFile(path.join(clientDistPath, 'index.html'));
   });
 }
+
+// JSON body parse error handler - return JSON on invalid JSON
+app.use((err, req, res, next) => {
+  if (err && err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.warn('Invalid JSON received for', req.path, { rawBody: req.rawBody ? req.rawBody.slice(0,1000) : undefined });
+    return res.status(400).json({ message: 'Invalid JSON body. Ensure Content-Type: application/json and properly formatted JSON.' });
+  }
+  next(err);
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

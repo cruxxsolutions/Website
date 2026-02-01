@@ -1,8 +1,5 @@
 const Mailgun = require('mailgun.js');
 const FormData = require('form-data');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const emailTest = async (req, res) => {
   if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
