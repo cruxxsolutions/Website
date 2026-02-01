@@ -85,45 +85,59 @@ const tokenCheck = async (req, res) => {
   // Mask token for safe logging in non-production only
   if (process.env.NODE_ENV !== 'production') {
     const masked = token.length > 8 ? token.slice(0,4) + '...' + token.slice(-4) : '***';
-    console.log('Validating Mailtrap token:', masked);
+    console.log('Validating Mailtrap token (masked):', masked);
   }
 
-  const options = {
-    hostname: 'api.mailtrap.io',
-    path: '/api/v1/inboxes',
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json'
-    },
-    timeout: 5000
-  };
+  const hosts = ['api.mailtrap.io', 'send.api.mailtrap.io'];
+  let lastErr = null;
 
-  const reqGet = https.request(options, (resp) => {
-    let data = '';
-    resp.on('data', (chunk) => { data += chunk; });
-    resp.on('end', () => {
-      if (resp.statusCode === 200) {
-        return res.status(200).json({ ok: true, message: 'Mailtrap token is valid (inboxes accessible).' });
+  for (const host of hosts) {
+    const options = {
+      hostname: host,
+      path: '/api/v1/inboxes',
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      },
+      timeout: 5000
+    };
+
+    try {
+      const result = await new Promise((resolve, reject) => {
+        const reqGet = https.request(options, (resp) => {
+          let data = '';
+          resp.on('data', (chunk) => { data += chunk; });
+          resp.on('end', () => {
+            resolve({ statusCode: resp.statusCode, body: data });
+          });
+        });
+
+        reqGet.on('error', (err) => reject(err));
+        reqGet.on('timeout', () => { reqGet.destroy(); reject(new Error('timeout')); });
+        reqGet.end();
+      });
+
+      if (result.statusCode === 200) {
+        return res.status(200).json({ ok: true, message: `Mailtrap token is valid (inboxes accessible via ${host}).` });
       }
-      if (resp.statusCode === 401) {
-        return res.status(401).json({ ok: false, message: 'Mailtrap token unauthorized (invalid token or missing permissions).' });
+
+      if (result.statusCode === 401) {
+        return res.status(401).json({ ok: false, message: `Mailtrap token unauthorized when calling ${host} (invalid token or missing permissions).` });
       }
-      return res.status(resp.statusCode || 502).json({ ok: false, message: `Mailtrap token check returned status ${resp.statusCode}`, details: data ? JSON.parse(data) : null });
-    });
-  });
 
-  reqGet.on('error', (err) => {
-    console.error('Token check request error:', err);
-    return res.status(500).json({ ok: false, message: 'Token check failed: ' + (err && err.message ? err.message : String(err)) });
-  });
+      // Other non-200/401 responses; capture and continue trying next host
+      lastErr = { host, statusCode: result.statusCode, body: (() => { try { return JSON.parse(result.body); } catch (e) { return result.body; } })() };
+    } catch (err) {
+      // DNS or network errors (ENOTFOUND etc.) — try next host
+      console.warn(`Token check: host ${host} failed:`, err && err.code ? err.code : err.message || err);
+      lastErr = { host, error: err && err.message ? err.message : String(err) };
+      continue;
+    }
+  }
 
-  reqGet.on('timeout', () => {
-    reqGet.destroy();
-    return res.status(504).json({ ok: false, message: 'Token check timed out' });
-  });
-
-  reqGet.end();
+  // If we get here, none of the hosts succeeded
+  return res.status(502).json({ ok: false, message: 'Token check failed: no Mailtrap host responded successfully.', last: lastErr });
 };
 
 module.exports = { emailTest, tokenCheck };
