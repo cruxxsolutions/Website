@@ -47,19 +47,17 @@ const About = () => {
                  <h2 className="text-2xl font-bold text-white mb-2">
                     Vision
                 </h2>
-                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto text-center text-justify">
                     We envision ourselves as a leader in aerial services, recognized for tailored expertise
                     that earns deep trust across sectors.
                 </p>
                 <h2 className="text-2xl font-bold text-white mb-2">
                     Our Approach
                 </h2>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    <div>To design and deliver innovative, reliable, and safe engineering solutions that address the </div>
-                    <div className="text-blue">crux</div>
-                    <div>of real-world problems with precision and foresight.</div>
+                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto text-center text-justify">
+                    To design and deliver innovative, reliable, and safe engineering solutions that address the <span className="text-primary">crux</span> of real-world problems with precision and foresight.
                 </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto text-center text-justify">
                     Through operational excellence, sustainability, and accountability, we exist to serve our customers with care, integrity, and deep responsibility. We listen closely to their challenges, stand beside them in solving what truly matters, and deliver reliable and safe solutions they can trust. By focusing on real impact—not just technology—we help our customers build better outcomes for their communities, their environments, and the future they are working toward.
                 </p>
                 <h2 className="text-2xl font-bold text-white mb-8">
