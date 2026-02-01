@@ -5,37 +5,37 @@ const About = () => {
         {
             name: 'Jagmeet Singh Wade',
             role: 'Co-Founder & CEO',
-            branch: 'Final Year B.Tech Mechanical Engineering',
+            branch: '',
         },
         {
             name: 'Ryan Cruise Dsouza',
             role: 'Co-Founder & MD',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Ojas Akole',
             role: 'CTO',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Diven Idnani',
             role: 'UAV Systems Engineer',
-            branch: 'Final Year B.Tech Computer Science Engineering',
+            branch: '',
         },
         {
             name: 'Durva Borhade',
             role: 'COO',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Vedant Bajaj',
             role: 'CDO',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Nikhil Redkar',
             role: 'Lead Software Engineer',
-            branch: 'Final Year B.Tech Computer Science Engineering',
+            branch: '',
         }
     ];
 
@@ -55,7 +55,9 @@ const About = () => {
                     Our Approach
                 </h2>
                 <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    To design and deliver innovative, reliable, and safe engineering solutions that address the crux of real-world problems with precision and foresight.
+                    <div>To design and deliver innovative, reliable, and safe engineering solutions that address the </div>
+                    <div className="text-blue">crux</div>
+                    <div>of real-world problems with precision and foresight.</div>
                 </p>
                 <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
                     Through operational excellence, sustainability, and accountability, we exist to serve our customers with care, integrity, and deep responsibility. We listen closely to their challenges, stand beside them in solving what truly matters, and deliver reliable and safe solutions they can trust. By focusing on real impact—not just technology—we help our customers build better outcomes for their communities, their environments, and the future they are working toward.
