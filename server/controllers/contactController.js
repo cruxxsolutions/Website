@@ -95,9 +95,10 @@ const submitContact = async (req, res) => {
             if (mgStatus === 401) {
                 return res.status(502).json({ message: 'Mailgun unauthorized: check MAILGUN_API_KEY.', mailgunStatus: mgStatus, detail: mgBody });
             }
-
+            console.log('Mailgun response error:', error && error.response ? error.response.body : error);
             // Other Mailgun errors
             return res.status(502).json({ message: 'Mailgun API error.', mailgunStatus: mgStatus, detail: mgBody });
+            
         }
 
         // Fallback to unexpected server error
