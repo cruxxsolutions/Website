@@ -92,13 +92,16 @@ const tokenCheck = async (req, res) => {
   let lastErr = null;
 
   for (const host of hosts) {
+    // For management API use GET /api/v1/inboxes; for sending API use POST /api/send
+    let isSendApi = host === 'send.api.mailtrap.io';
+
     const options = {
       hostname: host,
-      path: '/api/v1/inboxes',
-      method: 'GET',
+      path: isSendApi ? '/api/send' : '/api/v1/inboxes',
+      method: isSendApi ? 'POST' : 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
+        'Accept': 'application/json',
       },
       timeout: 5000
     };
@@ -115,18 +118,33 @@ const tokenCheck = async (req, res) => {
 
         reqGet.on('error', (err) => reject(err));
         reqGet.on('timeout', () => { reqGet.destroy(); reject(new Error('timeout')); });
+
+        // If POST to send API, write a minimal payload
+        if (isSendApi) {
+          const payload = JSON.stringify({
+            from: { email: process.env.MAILTRAP_FROM || process.env.EMAIL_FROM || 'no-reply@example.com', name: 'Mailtrap Token Check' },
+            to: [{ email: process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'no-reply@example.com' }],
+            subject: 'Token check',
+            text: 'Token check'
+          });
+          reqGet.setHeader('Content-Type', 'application/json');
+          reqGet.setHeader('Content-Length', Buffer.byteLength(payload));
+          reqGet.write(payload);
+        }
+
         reqGet.end();
       });
 
-      if (result.statusCode === 200) {
-        return res.status(200).json({ ok: true, message: `Mailtrap token is valid (inboxes accessible via ${host}).` });
+      // Treat any 2xx as success
+      if (result.statusCode >= 200 && result.statusCode < 300) {
+        return res.status(200).json({ ok: true, message: `Mailtrap token valid (verified via ${host}${isSendApi ? ' /api/send' : ' /api/v1/inboxes'}).` });
       }
 
       if (result.statusCode === 401) {
-        return res.status(401).json({ ok: false, message: `Mailtrap token unauthorized when calling ${host} (invalid token or missing permissions).` });
+        return res.status(401).json({ ok: false, message: `Mailtrap token unauthorized when calling ${host}${isSendApi ? '/api/send' : '/api/v1/inboxes'} (invalid token or missing permissions).` });
       }
 
-      // Other non-200/401 responses; capture and continue trying next host
+      // For send API, a 404 indicates wrong path on that host; capture and continue
       lastErr = { host, statusCode: result.statusCode, body: (() => { try { return JSON.parse(result.body); } catch (e) { return result.body; } })() };
     } catch (err) {
       // DNS or network errors (ENOTFOUND etc.) — try next host
