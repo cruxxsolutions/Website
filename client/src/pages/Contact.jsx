@@ -31,7 +31,7 @@ const Contact = () => {
         const formDataToSubmit = new FormData(form);
 
         // Submit to FormSubmit.co
-        fetch('https://formsubmit.co/' + import.meta.env.CONTACT_EMAIL, {
+        fetch('https://formsubmit.co/' + import.meta.env.VITE_CONTACT_EMAIL, {
             method: 'POST',
             body: formDataToSubmit,
         })
