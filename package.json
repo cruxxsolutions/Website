@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "cd client && npm ci --include=dev && npm run build",
+    "start": "cd client && npm ci --include=dev && npm run build && npx serve -s client/dist -l $PORT",
     "start:client": "cd client && npm ci --include=dev && npm run dev"
   }
 }
