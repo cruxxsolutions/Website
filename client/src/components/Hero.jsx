@@ -28,7 +28,7 @@ const Hero = () => {
                         Critical Thinking <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Reliable Engineering</span>
                     </h1>
                     <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                        Providing advanced drone solutions for enterprise, industrial, and creative applications with unmatched reliability.
+                        Providing advanced aerial solutions for enterprise, industrial, and creative applications with unmatched reliability.
                     </p>
 
                     <div className="flex flex-col sm:flex-row justify-center gap-4">

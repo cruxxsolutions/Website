@@ -5,30 +5,22 @@ const Footer = () => {
     return (
         <footer className="bg-darker border-t border-gray-800 text-gray-300 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center justify-items-center">
                     <div className="space-y-4">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center justify-center space-x-2">
                             <Rocket className="h-6 w-6 text-primary" />
                             <span className="text-xl font-bold text-white">CRUXX</span>
                         </div>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-400 text-justify">
                             Driven by innovation and guided by foresight, building reliable, safe, and sustainable aerial solutions you can trust; today and for the future.
                         </p>
                     </div>
 
-                    <div>
-                        <h3 className="text-white font-semibold mb-4">Services</h3>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-primary transition">Aerial Photography</a></li>
-                            <li><a href="#" className="hover:text-primary transition">Mapping & Surveying</a></li>
-                            <li><a href="#" className="hover:text-primary transition">Agritech</a></li>
-                            <li><a href="#" className="hover:text-primary transition">Security & Surveillance</a></li>
-                        </ul>
-                    </div>
+                    
 
                     <div>
                         <h3 className="text-white font-semibold mb-4">Contact</h3>
-                        <ul className="space-y-2 text-sm">
+                        <ul className="space-y-2 text-sm flex flex-col items-center">
                             
                             <li className="flex items-center space-x-2">
                                 <Phone className="h-4 w-4 text-primary" />
@@ -36,18 +28,18 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center space-x-2">
                                 <Mail className="h-4 w-4 text-primary" />
-                                <span>contact@cruxx.com</span>
+                                <span>cruxxsolutions@gmail.com</span>
                             </li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="text-white font-semibold mb-4">Follow Us</h3>
-                        <div className="flex space-x-4">
-                            <a href="#" className="text-gray-400 hover:text-primary transition"><Instagram className="h-5 w-5" /></a>
+                        <div className="flex space-x-4 justify-center">
+                            <a href="https://www.instagram.com/invites/contact/?igsh=dtsun0ttss2c&utm_content=10vqxa0p" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition"><Instagram className="h-5 w-5" /></a>
                             <a href="#" className="text-gray-400 hover:text-primary transition"><Twitter className="h-5 w-5" /></a>
-                            <a href="#" className="text-gray-400 hover:text-primary transition"><Linkedin className="h-5 w-5" /></a>
-                            <a href="#" className="text-gray-400 hover:text-primary transition"><Facebook className="h-5 w-5" /></a>
+                            <a href="https://www.linkedin.com/company/cruxx-solutions-private-limited/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition"><Linkedin className="h-5 w-5" /></a>
+                            
                         </div>
                     </div>
                 </div>

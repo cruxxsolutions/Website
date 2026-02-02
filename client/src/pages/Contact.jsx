@@ -50,26 +50,18 @@ const Contact = () => {
                 >
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Get in Touch</h1>
                     <p className="text-xl text-gray-400 mb-10">
-                        Have a project in mind? Let's discuss how our drone solutions can help you achieve your goals.
+                        Have a project in mind? Let's discuss how our aerial solutions can help you achieve your goals.
                     </p>
 
                     <div className="space-y-8">
-                        <div className="flex items-start space-x-4">
-                            <div className="bg-primary/10 p-3 rounded-lg">
-                                <MapPin className="h-6 w-6 text-primary" />
-                            </div>
-                            <div>
-                                <h3 className="text-white font-semibold text-lg">Visit Us</h3>
-                                <p className="text-gray-400">123 Drone Valley, Tech City, TC 90210</p>
-                            </div>
-                        </div>
+                        
                         <div className="flex items-start space-x-4">
                             <div className="bg-primary/10 p-3 rounded-lg">
                                 <Mail className="h-6 w-6 text-primary" />
                             </div>
                             <div>
                                 <h3 className="text-white font-semibold text-lg">Email Us</h3>
-                                <p className="text-gray-400">{CONTACT_EMAIL}</p>
+                                <p className="text-gray-400">contact@cruxx.com</p>
                             </div>
                         </div>
                         <div className="flex items-start space-x-4">

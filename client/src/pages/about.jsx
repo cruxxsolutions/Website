@@ -5,37 +5,37 @@ const About = () => {
         {
             name: 'Jagmeet Singh Wade',
             role: 'Co-Founder & CEO',
-            branch: 'Final Year B.Tech Mechanical Engineering',
+            branch: '',
         },
         {
             name: 'Ryan Cruise Dsouza',
             role: 'Co-Founder & MD',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Ojas Akole',
             role: 'CTO',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Diven Idnani',
             role: 'UAV Systems Engineer',
-            branch: 'Final Year B.Tech Computer Science Engineering',
+            branch: '',
         },
         {
             name: 'Durva Borhade',
             role: 'COO',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Vedant Bajaj',
             role: 'CDO',
-            branch: 'Final Year B.Tech Robotics & Automation Engineering',
+            branch: '',
         },
         {
             name: 'Nikhil Redkar',
-            role: 'Lead Software Engineer',
-            branch: 'Final Year B.Tech Computer Science Engineering',
+            role: 'Software Engineer',
+            branch: '',
         }
     ];
 
@@ -47,17 +47,17 @@ const About = () => {
                  <h2 className="text-2xl font-bold text-white mb-2">
                     Vision
                 </h2>
-                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto text-center text-justify">
                     We envision ourselves as a leader in aerial services, recognized for tailored expertise
                     that earns deep trust across sectors.
                 </p>
                 <h2 className="text-2xl font-bold text-white mb-2">
                     Our Approach
                 </h2>
-                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto">
-                    To design and deliver innovative, reliable, and safe engineering solutions that address the crux of real-world problems with precision and foresight.
+                <p className="text-gray-400 text-lg leading-relaxed mb-6 max-w-3xl mx-auto text-center text-justify">
+                    To design and deliver innovative, reliable, and safe engineering solutions that address the <span className="text-primary">crux</span> of real-world problems with precision and foresight.
                 </p>
-                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto">
+                <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-3xl mx-auto text-center text-justify">
                     Through operational excellence, sustainability, and accountability, we exist to serve our customers with care, integrity, and deep responsibility. We listen closely to their challenges, stand beside them in solving what truly matters, and deliver reliable and safe solutions they can trust. By focusing on real impact—not just technology—we help our customers build better outcomes for their communities, their environments, and the future they are working toward.
                 </p>
                 <h2 className="text-2xl font-bold text-white mb-8">
@@ -106,14 +106,23 @@ const About = () => {
                 <h2 className="text-2xl font-bold text-white mb-2">
                     Our Team
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-                    {teamMembers.map((member) => (
-                        <div key={member.name} className="bg-darker p-6 rounded-2xl text-center">
-                            <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
-                            <p className="text-gray-400 mb-2">{member.role}</p>
-                            <p className="text-gray-500 text-sm">{member.branch}</p>
+                <div className="flex flex-col items-center gap-8 mt-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+                        {teamMembers.slice(0, 6).map((member) => (
+                            <div key={member.name} className="bg-darker p-6 rounded-2xl text-center">
+                                <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
+                                <p className="text-gray-400 mb-2">{member.role}</p>
+                                <p className="text-gray-500 text-sm">{member.branch}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="w-full flex justify-center">
+                        <div className="bg-darker p-6 rounded-2xl text-center md:w-1/3">
+                            <h3 className="text-xl font-bold text-white mb-2">{teamMembers[6].name}</h3>
+                            <p className="text-gray-400 mb-2">{teamMembers[6].role}</p>
+                            <p className="text-gray-500 text-sm">{teamMembers[6].branch}</p>
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
         </div>

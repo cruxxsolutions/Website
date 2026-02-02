@@ -36,7 +36,7 @@ const Services = () => {
             <div className="text-center mb-16">
                 <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Our Expertise</h1>
                 <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                    Comprehensive drone solutions tailored to your industry needs.
+                    Comprehensive aerial solutions tailored to your industry needs.
                 </p>
             </div>
 
