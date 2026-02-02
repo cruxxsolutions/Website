@@ -21,7 +21,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: |
           client/package-lock.json
-          server/package-lock.json
     
     - name: Install frontend dependencies
       working-directory: ./client
@@ -35,14 +34,3 @@ jobs:
       working-directory: ./client
       run: npm run build
     
-    - name: Install backend dependencies
-      working-directory: ./server
-      run: npm ci
-    
-    - name: Verify backend structure
-      working-directory: ./server
-      run: |
-        test -f server.js && echo "✓ server.js found"
-        test -f api/contact.js && echo "✓ api/contact.js found"
-        test -f api/services.js && echo "✓ api/services.js found"
-        echo "Backend structure verified"

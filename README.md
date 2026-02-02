@@ -9,18 +9,10 @@ A modern, responsive corporate website for a drone solutions company built with 
 
 ## Setup & Installation
 
-### 1. Backend Setup
-```bash
-cd server
-npm install
-# Create .env file if not exists (see .env.example or code)
-# Seed the database
-node seeder.js
-# Start server
-npm start
-```
+### Frontend Only (No backend)
+This project no longer includes a backend. The contact form opens the user's mail client to send messages. To change the recipient email, set the Vite env variable `VITE_CONTACT_EMAIL` in a `.env` file at the `client/` root (example: `VITE_CONTACT_EMAIL=you@domain.com`).
 
-### 2. Frontend Setup
+### Frontend Setup
 ```bash
 cd client
 npm install
@@ -34,7 +26,7 @@ Open `http://localhost:5173` in your browser.
 ## Features
 - Dynamic Services listing
 - Project Gallery
-- Contact Form (sends emails via Mailgun)
+- Contact Form (client-side mailto; recipient configurable with `VITE_CONTACT_EMAIL`)
 - Responsive Design with Dark Mode theme
 
 ## Deployment
@@ -44,7 +36,6 @@ This project is configured for deployment on Vercel. See [DEPLOYMENT.md](./DEPLO
 ### Quick Deploy
 
 1. **Frontend**: Deploy `client` directory as a Vite project
-2. **Backend**: Deploy `server` directory with serverless functions in `server/api`
-3. Set environment variables (see [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md))
+2. **Backend**: No backend to deploy — contact form uses client-side mailto. Set `VITE_CONTACT_EMAIL` in your Vercel environment variables if you want to change the recipient (see [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md)).
 
 For custom domain setup and detailed instructions, refer to [DEPLOYMENT.md](./DEPLOYMENT.md).

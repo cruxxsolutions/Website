@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL;
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -16,19 +17,26 @@ const Contact = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const API_BASE = import.meta.env.VITE_API_URL || '';
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setStatus('sending');
-        try {
-            await axios.post(`${API_BASE}/api/contact`, formData);
-            setStatus('success');
-            setFormData({ name: '', email: '', company: '', message: '' });
-        } catch (error) {
-            console.error(error);
+
+        const { name, email, company, message } = formData;
+        if (!name || !email || !message) {
             setStatus('error');
+            return;
         }
+
+        const subject = `Contact Form Submission from ${name}`;
+        const body = `Name: ${name}\nEmail: ${email}\nCompany: ${company || 'N/A'}\n\n${message}`;
+
+        const mailto = `mailto:${encodeURIComponent(CONTACT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        // Open user's mail client
+        window.location.href = mailto;
+
+        setStatus('success');
+        setFormData({ name: '', email: '', company: '', message: '' });
     };
 
     return (
@@ -61,7 +69,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h3 className="text-white font-semibold text-lg">Email Us</h3>
-                                <p className="text-gray-400">contact@cruxx.com</p>
+                                <p className="text-gray-400">{CONTACT_EMAIL}</p>
                             </div>
                         </div>
                         <div className="flex items-start space-x-4">
