@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Use Vite env var; fallback to temporary email
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'temp-contact@example.com';
-
 const Contact = () => {
     const [formData, setFormData] = useState({
         name: '',
@@ -25,19 +22,28 @@ const Contact = () => {
         const { name, email, company, message } = formData;
         if (!name || !email || !message) {
             setStatus('error');
+            setTimeout(() => setStatus(''), 3000);
             return;
         }
 
-        const subject = `Contact Form Submission from ${name}`;
-        const body = `Name: ${name}\nEmail: ${email}\nCompany: ${company || 'N/A'}\n\n${message}`;
+        // Create form data for submission
+        const form = e.target;
+        const formDataToSubmit = new FormData(form);
 
-        const mailto = `mailto:${encodeURIComponent(CONTACT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-        // Open user's mail client
-        window.location.href = mailto;
-
-        setStatus('success');
-        setFormData({ name: '', email: '', company: '', message: '' });
+        // Submit to FormSubmit.co
+        fetch('https://formsubmit.co/' + import.meta.env.CONTACT_EMAIL, {
+            method: 'POST',
+            body: formDataToSubmit,
+        })
+            .then(() => {
+                setStatus('success');
+                setFormData({ name: '', email: '', company: '', message: '' });
+                setTimeout(() => setStatus(''), 3000);
+            })
+            .catch(() => {
+                setStatus('error');
+                setTimeout(() => setStatus(''), 3000);
+            });
     };
 
     return (
@@ -62,7 +68,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h3 className="text-white font-semibold text-lg">Email Us</h3>
-                                <p className="text-gray-400">{CONTACT_EMAIL}</p>
+                                <p className="text-gray-400">{import.meta.env.VITE_CONTACT_EMAIL}</p>
                             </div>
                         </div>
                         <div className="flex items-start space-x-4">
