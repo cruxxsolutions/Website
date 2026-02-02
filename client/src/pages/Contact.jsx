@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL;
+// Use Vite env var; fallback to temporary email
+const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'temp-contact@example.com';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -61,7 +62,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h3 className="text-white font-semibold text-lg">Email Us</h3>
-                                <p className="text-gray-400">contact@cruxx.com</p>
+                                <p className="text-gray-400">{CONTACT_EMAIL}</p>
                             </div>
                         </div>
                         <div className="flex items-start space-x-4">
